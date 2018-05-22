@@ -19,7 +19,7 @@ tinymce.PluginManager.add('variable', function(editor) {
      * in the HTML view
      * @type {object}
      */
-    var mapper = editor.getParam("variable_mapper", {});
+    var mapper = editor.getParam('variable_mapper', {});
 
     /**
      * define a list of variables that are allowed
@@ -28,20 +28,20 @@ tinymce.PluginManager.add('variable', function(editor) {
      * @todo  make it possible to pass in a function to be used a callback for validation
      * @type {array}
      */
-    var valid = editor.getParam("variable_valid", null);
+    var valid = editor.getParam('variable_valid', null);
 
     /**
      * Get custom variable class name
      * @type {string}
      */
-    var className = editor.getParam("variable_class", "variable");
+    var className = editor.getParam('variable_class', 'variable');
 
     /**
      * Prefix and suffix to use to mark a variable
      * @type {string}
      */
-    var prefix = editor.getParam("variable_prefix", "{{");
-    var suffix = editor.getParam("variable_suffix", "}}");
+    var prefix = editor.getParam('variable_prefix', '{{');
+    var suffix = editor.getParam('variable_suffix', '}}');
     var stringVariableRegex = new RegExp(prefix + '([a-z. _]*)?' + suffix, 'g');
 
     /**
@@ -60,24 +60,24 @@ tinymce.PluginManager.add('variable', function(editor) {
         return validString.indexOf( '|' + name + '|' ) > -1 ? true : false;
     }
 
-    function getMappedValue( cleanValue ) {
+    function getMappedValue( cleanValue, value ) {
         if(typeof mapper === 'function')
             return mapper(cleanValue);
 
-        return mapper.hasOwnProperty(cleanValue) ? mapper[cleanValue] : cleanValue;
+        return mapper.hasOwnProperty(cleanValue) ? mapper[cleanValue] : value.trim();
     }
 
     /**
-     * Strip variable to keep the plain variable string
-     * @example "{test}" => "test"
-     * @param {string} value
-     * @return {string}
-     */
-    function cleanVariable(value) {
-        return value.replace(/[^a-zA-Z0-9._]/g, "");
-    }
+    * Strip variable to keep the plain variable string
+    * @example "{test}" => "test"
+    * @param {string} value
+    * @return {string}
+    */
+   function cleanVariable(value) {
+       return value.replace(/[^a-zA-Z0-9._]/g, "");
+   }
 
-    /**
+   /**
      * convert a text variable "x" to a span with the needed
      * attributes to style it with CSS
      * @param  {string} value
@@ -91,7 +91,7 @@ tinymce.PluginManager.add('variable', function(editor) {
         if( ! isValid(cleanValue) )
             return value;
 
-        var cleanMappedValue = getMappedValue(cleanValue);
+        var cleanMappedValue = getMappedValue(cleanValue, value);
 
         editor.fire('variableToHTML', {
             value: value,
