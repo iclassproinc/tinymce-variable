@@ -83,7 +83,7 @@ tinymce.PluginManager.add('variable', function(editor) {
      * @param  {string} value
      * @return {string}
      */
-    function createHTMLVariable( value ) {
+    function createHTMLVariable( value, options ) {
 
         var cleanValue = cleanVariable(value);
 
@@ -91,15 +91,19 @@ tinymce.PluginManager.add('variable', function(editor) {
         if( ! isValid(cleanValue) )
             return value;
 
-        var cleanMappedValue = getMappedValue(cleanValue, value);
+        var mappedValue = getMappedValue(cleanValue, value);
+        var optionsHTML = optionsToHTML(options);
+        if (optionsHTML)
+            optionsHTML = ' ' + optionsHTML;
 
         editor.fire('variableToHTML', {
             value: value,
-            cleanValue: cleanValue
+            cleanValue: cleanValue,
+            options: (options || {})
         });
 
         var variable = prefix + cleanValue + suffix;
-        return '<span class="' + className + '" data-original-variable="' + variable + '" contenteditable="false">' + cleanMappedValue + '</span>';
+        return '<span class="' + className + '" contenteditable="false" data-original-variable="' + variable + '"' + optionsHTML + '>' + mappedValue + '</span>';
     }
 
     /**
@@ -199,8 +203,8 @@ tinymce.PluginManager.add('variable', function(editor) {
      * @param {string} value
      * @return {void}
      */
-    function addVariable(value) {
-        var htmlVariable = createHTMLVariable(value);
+    function addVariable(value, options) {
+        var htmlVariable = createHTMLVariable(value, options);
         editor.execCommand('mceInsertContent', false, htmlVariable);
     }
 
@@ -209,6 +213,17 @@ tinymce.PluginManager.add('variable', function(editor) {
             return true;
 
         return false;
+    }
+
+    function optionsToHTML(options) {
+        var html = [];
+        var keys = Object.keys(options || {});
+
+        for (var i = 0; i < keys.length; i++) {
+            html.push(keys[i] + '="' + options[keys[i]] + '"');
+        }
+
+        return html.join(' ');
     }
 
     /**
