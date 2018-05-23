@@ -60,24 +60,24 @@ tinymce.PluginManager.add('variable', function(editor) {
         return validString.indexOf( '|' + name + '|' ) > -1 ? true : false;
     }
 
-    function getMappedValue( cleanValue, value ) {
+    function getMappedValue( cleanValue ) {
         if(typeof mapper === 'function')
             return mapper(cleanValue);
 
-        return mapper.hasOwnProperty(cleanValue) ? mapper[cleanValue] : value.trim();
+        return mapper.hasOwnProperty(cleanValue) ? mapper[cleanValue] : cleanValue;
     }
 
     /**
-    * Strip variable to keep the plain variable string
-    * @example "{test}" => "test"
-    * @param {string} value
-    * @return {string}
-    */
-   function cleanVariable(value) {
-       return value.replace(/[^a-zA-Z0-9._]/g, "");
-   }
+     * Strip variable to keep the plain variable string
+     * @example "{test}" => "test"
+     * @param {string} value
+     * @return {string}
+     */
+    function cleanVariable(value) {
+        return value.replace(/[^a-zA-Z0-9._\s\u00C0-\u017F]/g, '');
+    }
 
-   /**
+    /**
      * convert a text variable "x" to a span with the needed
      * attributes to style it with CSS
      * @param  {string} value
@@ -91,7 +91,7 @@ tinymce.PluginManager.add('variable', function(editor) {
         if( ! isValid(cleanValue) )
             return value;
 
-        var cleanMappedValue = getMappedValue(cleanValue, value);
+        var cleanMappedValue = getMappedValue(cleanValue);
 
         editor.fire('variableToHTML', {
             value: value,
