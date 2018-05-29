@@ -42,7 +42,7 @@ tinymce.PluginManager.add('variable', function(editor) {
      */
     var prefix = editor.getParam('variable_prefix', '{{');
     var suffix = editor.getParam('variable_suffix', '}}');
-    var stringVariableRegex = new RegExp(prefix + '([a-z. _]*)?' + suffix, 'g');
+    var stringVariableRegex = new RegExp(prefix + '([^a-zA-Z0-9._\s\u00C0-\u017F]*)?' + suffix, 'g');
 
     /**
      * check if a certain variable is valid
