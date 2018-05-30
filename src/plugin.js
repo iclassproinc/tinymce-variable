@@ -126,11 +126,6 @@ tinymce.PluginManager.add('variable', function(editor) {
             div = editor.dom.create('div', null, nodeValue);
             while ((node = div.lastChild)) {
                 editor.dom.insertAfter(node, nodeList[i]);
-
-                if(isVariable(node)) {
-                    var next = node.nextSibling;
-                    editor.selection.setCursorLocation(next);
-                }
             }
 
             editor.dom.remove(nodeList[i]);
