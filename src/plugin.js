@@ -126,6 +126,11 @@ tinymce.PluginManager.add('variable', function(editor) {
             div = editor.dom.create('div', null, nodeValue);
             while ((node = div.lastChild)) {
                 editor.dom.insertAfter(node, nodeList[i]);
+
+                if(isVariable(node)) {
+                    var next = node.nextSibling;
+                    editor.selection.setCursorLocation(next);
+                }
             }
 
             editor.dom.remove(nodeList[i]);
@@ -169,26 +174,6 @@ tinymce.PluginManager.add('variable', function(editor) {
 
     }
 
-    function setCursor(selector) {
-        var ell = editor.dom.select(selector)[0];
-        if(ell) {
-            var next = ell.nextSibling;
-            editor.selection.setCursorLocation(next);
-        }
-    }
-
-    /**
-     * handle formatting the content of the editor based on
-     * the current format. For example if a user switches to source view and back
-     * @param  {object} e
-     * @return {void}
-     */
-    function handleContentRerender(e) {
-        // store cursor location
-        return e.format === 'raw' ? stringToHTML() : htmlToString();
-        // restore cursor location
-    }
-
     /**
      * insert a variable into the editor at the current cursor location
      * @param {string} value
@@ -225,7 +210,6 @@ tinymce.PluginManager.add('variable', function(editor) {
 
     editor.on('nodechange', stringToHTML );
     editor.on('keyup', stringToHTML );
-    editor.on('beforegetcontent', handleContentRerender);
     editor.on('click', handleClick);
 
     this.addVariable = addVariable;
