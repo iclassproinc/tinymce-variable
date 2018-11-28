@@ -49,7 +49,7 @@ tinymce.PluginManager.add('variable', function(editor) {
      */
     function getStringVariableRegex()
     {
-        return new RegExp(prefix + "[a-zA-Z. _]+" + suffix, "g");
+        return new RegExp(prefix + "[a-zA-Z]+" + suffix, "g");
     }
 
     /**
@@ -178,7 +178,6 @@ tinymce.PluginManager.add('variable', function(editor) {
             // because we now have an text representation of the variable
             editor.dom.remove(nodeList[i]);
         }
-
     }
 
     /**
@@ -188,13 +187,7 @@ tinymce.PluginManager.add('variable', function(editor) {
      * @return {void}
      */
     function handleContentRerender(e) {
-        // store cursor location
-        var cursorBookmark = tinymce.activeEditor.selection.getBookmark(1, true);
-
         return e.format === 'raw' ? stringToHTML() : htmlToString();
-
-        // restore cursor location
-        tinymce.activeEditor.selection.moveToBookmark(cursorBookmark);
     }
 
     /**
