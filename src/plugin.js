@@ -10,7 +10,7 @@
 
 /*global tinymce:true */
 
-tinymce.PluginManager.add('variable', function(editor) {
+tinymce.PluginManager.add('variable', function (editor) {
 
     var VK = tinymce.util.VK;
 
@@ -19,7 +19,7 @@ tinymce.PluginManager.add('variable', function(editor) {
      * in the HTML view
      * @type {object}
      */
-    var mapper = editor.getParam("variable_mapper", {});
+    var mapper = editor.getParam('variable_mapper', {});
 
     /**
      * define a list of variables that are allowed
@@ -28,13 +28,13 @@ tinymce.PluginManager.add('variable', function(editor) {
      * @todo  make it possible to pass in a function to be used a callback for validation
      * @type {array}
      */
-    var valid = editor.getParam("variable_valid", null);
+    var valid = editor.getParam('variable_valid', null);
 
     /**
      * Get custom variable class name
      * @type {string}
      */
-    var className = editor.getParam("variable_class", "variable");
+    var className = editor.getParam('variable_class', 'variable');
 
     /**
      * Prefix and suffix to use to mark a variable
@@ -47,9 +47,8 @@ tinymce.PluginManager.add('variable', function(editor) {
      * RegExp is not stateless with '\g' so we return a new variable each call
      * @return {RegExp}
      */
-    function getStringVariableRegex()
-    {
-        return new RegExp(prefix + "[a-zA-Z]+" + suffix, "g");
+    function getStringVariableRegex() {
+        return new RegExp(prefix + '([a-zA-Z0-9._ \\u00C0-\\u017F]*)?' + suffix, "g");
     }
 
     /**
@@ -57,19 +56,18 @@ tinymce.PluginManager.add('variable', function(editor) {
      * @param {string} name
      * @return {bool}
      */
-    function isValid( name )
-    {
+    function isValid(name) {
 
-        if( ! valid || valid.length === 0 )
+        if (!valid || valid.length === 0)
             return true;
 
         var validString = '|' + valid.join('|') + '|';
 
-        return validString.indexOf( '|' + name + '|' ) > -1 ? true : false;
+        return validString.indexOf('|' + name + '|') > -1 ? true : false;
     }
 
-    function getMappedValue( cleanValue ) {
-        if(typeof mapper === 'function')
+    function getMappedValue(cleanValue) {
+        if (typeof mapper === 'function')
             return mapper(cleanValue);
 
         return mapper.hasOwnProperty(cleanValue) ? mapper[cleanValue] : cleanValue;
@@ -82,7 +80,7 @@ tinymce.PluginManager.add('variable', function(editor) {
      * @return {string}
      */
     function cleanVariable(value) {
-        return value.replace(/[^a-zA-Z0-9._]/g, "");
+        return value.replace(/[^a-zA-Z0-9._\s\u00C0-\u017F]/g, '');
     }
 
     /**
@@ -91,12 +89,12 @@ tinymce.PluginManager.add('variable', function(editor) {
      * @param  {string} value
      * @return {string}
      */
-    function createHTMLVariable( value ) {
+    function createHTMLVariable(value) {
 
         var cleanValue = cleanVariable(value);
 
         // check if variable is valid
-        if( ! isValid(cleanValue) )
+        if (!isValid(cleanValue))
             return value;
 
         var cleanMappedValue = getMappedValue(cleanValue);
@@ -114,15 +112,14 @@ tinymce.PluginManager.add('variable', function(editor) {
      * convert variable strings into html elements
      * @return {void}
      */
-    function stringToHTML()
-    {
+    function stringToHTML() {
         var nodeList = [],
             nodeValue,
             node,
             div;
 
         // find nodes that contain a string variable
-        tinymce.walk(editor.getBody(), function(n) {
+        tinymce.walk(editor.getBody(), function (n) {
             if (n.nodeType == 3 && n.nodeValue && getStringVariableRegex().test(n.nodeValue)) {
                 nodeList.push(n);
             }
@@ -135,7 +132,7 @@ tinymce.PluginManager.add('variable', function(editor) {
             while ((node = div.lastChild)) {
                 editor.dom.insertAfter(node, nodeList[i]);
 
-                if(isVariable(node)) {
+                if (isVariable(node)) {
                     var next = node.nextSibling;
                 }
             }
@@ -149,15 +146,14 @@ tinymce.PluginManager.add('variable', function(editor) {
      * for example when a user opens source view
      * @return {void}
      */
-    function htmlToString()
-    {
+    function htmlToString() {
         var nodeList = [],
             nodeValue,
             node,
             div;
 
-            // find nodes that contain a HTML variable
-        tinymce.walk( editor.getBody(), function(n) {
+        // find nodes that contain a HTML variable
+        tinymce.walk(editor.getBody(), function (n) {
             if (n.nodeType == 1) {
                 var original = n.getAttribute('data-original-variable');
                 if (original !== null) {
@@ -201,7 +197,7 @@ tinymce.PluginManager.add('variable', function(editor) {
     }
 
     function isVariable(element) {
-        if(typeof element.getAttribute === 'function' && element.hasAttribute('data-original-variable'))
+        if (typeof element.getAttribute === 'function' && element.hasAttribute('data-original-variable'))
             return true;
 
         return false;
@@ -214,7 +210,7 @@ tinymce.PluginManager.add('variable', function(editor) {
     function handleClick(e) {
         var target = e.target;
 
-        if(!isVariable(target))
+        if (!isVariable(target))
             return null;
 
         var value = target.getAttribute('data-original-variable');
@@ -227,7 +223,7 @@ tinymce.PluginManager.add('variable', function(editor) {
     function preventDrag(e) {
         var target = e.target;
 
-        if(!isVariable(target))
+        if (!isVariable(target))
             return null;
 
         e.preventDefault();
