@@ -12,8 +12,6 @@
 
 tinymce.PluginManager.add('variable', function (editor) {
 
-    var VK = tinymce.util.VK;
-
     /**
      * Object that is used to replace the variable string to be used
      * in the HTML view
@@ -193,7 +191,8 @@ tinymce.PluginManager.add('variable', function (editor) {
      */
     function addVariable(value) {
         var htmlVariable = createHTMLVariable(value);
-        editor.execCommand('mceInsertContent', false, htmlVariable);
+        // editor.execCommand('mceInsertContent', false, htmlVariable);
+        editor.selection.setContent(htmlVariable);
     }
 
     function isVariable(element) {
