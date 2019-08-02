@@ -129,10 +129,6 @@ tinymce.PluginManager.add('variable', function (editor) {
             div = editor.dom.create('div', null, nodeValue);
             while ((node = div.lastChild)) {
                 editor.dom.insertAfter(node, nodeList[i]);
-
-                if (isVariable(node)) {
-                    var next = node.nextSibling;
-                }
             }
 
             editor.dom.remove(nodeList[i]);
@@ -191,7 +187,6 @@ tinymce.PluginManager.add('variable', function (editor) {
      */
     function addVariable(value) {
         var htmlVariable = createHTMLVariable(value);
-        // editor.execCommand('mceInsertContent', false, htmlVariable);
         editor.selection.setContent(htmlVariable);
     }
 
@@ -212,6 +207,15 @@ tinymce.PluginManager.add('variable', function (editor) {
         if (!isVariable(target))
             return null;
 
+        // put the cursor right after the variable
+        if (e.target.nextSibling) {
+            editor.selection.setCursorLocation(e.target.nextSibling);
+        } else {
+            editor.selection.select(e.target);
+            editor.selection.collapse();
+        }
+
+        // and trigger event if we want to do something special
         var value = target.getAttribute('data-original-variable');
         editor.fire('variableClick', {
             value: cleanVariable(value),
@@ -229,10 +233,62 @@ tinymce.PluginManager.add('variable', function (editor) {
         e.stopImmediatePropagation();
     }
 
+    var currentDirection;
+
+    function keyDown(e) {
+        if (e.keyCode == 37) {
+            currentDirection = 'left';
+        } else if (e.keyCode == 39) {
+            currentDirection = 'right';
+        } else if (e.keyCode == 38) {
+            currentDirection = 'up';
+        } else if (e.keyCode == 40) {
+            currentDirection = 'down';
+        } else if (e.keyCode == 8) {
+            var r = editor.selection.getRng();
+            if (r.collapsed && r.startOffset >= 1 && r.startContainer.textContent.charCodeAt(r.startOffset) == 65279) {
+                // work around TinyMCE failing to delete a character when it's got some zero-width non-blocking char
+                r.startContainer.textContent =
+                    r.startContainer.textContent.slice(0, r.startOffset - 1) +
+                    r.startContainer.textContent.slice(r.startOffset + 1);
+
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        }
+    }
+
+    function nodeChange(e) {
+        var target = e.element;
+
+        if (!isVariable(target))
+            return null;
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        switch (currentDirection) {
+            case 'left':
+            case 'up':
+                editor.selection.select(target);
+                editor.selection.collapse(true);
+                break;
+
+            case 'down':
+            case 'right':
+                editor.selection.select(target);
+                editor.selection.collapse();
+                break;
+        }
+    }
+
     editor.on('beforegetcontent', handleContentRerender);
+    editor.on('init', stringToHTML);
     editor.on('getcontent', stringToHTML);
     editor.on('click', handleClick);
     editor.on('mousedown', preventDrag);
+    editor.on('keydown', keyDown);
+    editor.on('NodeChange', nodeChange);
 
     this.addVariable = addVariable;
 
