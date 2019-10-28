@@ -12,7 +12,8 @@
   },
   "description": "Make it possible to use variables in your TinyMCE editor.",
   "main": "src/plugin.js",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "eslint": "^1.0.0-rc-1",
     "uglify-js": "^3.1.0"
   },
