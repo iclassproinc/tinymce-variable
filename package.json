@@ -14,7 +14,7 @@
   "main": "src/plugin.js",
   "dependencies": {},
   "devDependencies": {
-    "eslint": "^1.0.0-rc-1",
+    "eslint": "^6.6.0",
     "uglify-js": "^3.1.0"
   },
   "bugs": {

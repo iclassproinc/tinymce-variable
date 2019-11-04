@@ -268,17 +268,17 @@ tinymce.PluginManager.add('variable', function (editor) {
         e.stopImmediatePropagation();
 
         switch (currentDirection) {
-            case 'left':
-            case 'up':
-                editor.selection.select(target);
-                editor.selection.collapse(true);
-                break;
+        case 'left':
+        case 'up':
+            editor.selection.select(target);
+            editor.selection.collapse(true);
+            break;
 
-            case 'down':
-            case 'right':
-                editor.selection.select(target);
-                editor.selection.collapse();
-                break;
+        case 'down':
+        case 'right':
+            editor.selection.select(target);
+            editor.selection.collapse();
+            break;
         }
     }
 
