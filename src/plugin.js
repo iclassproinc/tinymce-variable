@@ -46,7 +46,10 @@ tinymce.PluginManager.add('variable', function (editor) {
      * @return {RegExp}
      */
     function getStringVariableRegex() {
-        return new RegExp(prefix + '([a-zA-Z0-9._ \\u00C0-\\u017F]*)?' + suffix, "g");
+        RegExp.escape = function(s) {
+            return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        };
+        return new RegExp(RegExp.escape(prefix) + '([a-zA-Z0-9._ \\u00C0-\\u017F]*)?' + RegExp.escape(suffix), "g");
     }
 
     /**
