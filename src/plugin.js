@@ -58,7 +58,6 @@ tinymce.PluginManager.add('variable', function (editor) {
      * @return {bool}
      */
     function isValid(name) {
-
         if (!valid || valid.length === 0)
             return true;
 
@@ -191,6 +190,8 @@ tinymce.PluginManager.add('variable', function (editor) {
     function addVariable(value) {
         var htmlVariable = createHTMLVariable(value);
         editor.selection.setContent(htmlVariable);
+        editor.selection.collapse();
+        editor.focus();
     }
 
     function isVariable(element) {
