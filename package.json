@@ -1,6 +1,6 @@
 {
-  "name": "tinymce-variable",
-  "version": "0.9.1",
+  "name": "icp-tinymce-variable",
+  "version": "0.9.3",
   "scripts": {
     "test": "eslint -c .eslintrc src/plugin.js",
     "serve": "python -m SimpleHTTPServer",
@@ -8,9 +8,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bubobox/tinymce-variable.git"
+    "url": "https://github.com/byteasc/tinymce-variable.git"
   },
-  "description": "Make it possible to use variables in your TinyMCE editor.",
+  "description": "Make it possible to use variables in your TinyMCE editor - Fixed.",
   "main": "src/plugin.js",
   "dependencies": {},
   "devDependencies": {
@@ -18,6 +18,6 @@
     "uglify-js": "^3.1.0"
   },
   "bugs": {
-    "url": "https://github.com/bubobox/tinymce-variable/issues"
+    "url": "https://github.com/byteasc/tinymce-variable/issues"
   }
 }
