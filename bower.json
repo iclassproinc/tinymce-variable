@@ -1,6 +1,6 @@
 {
-    "name": "tinymce-variable",
-    "version": "0.1.0",
+    "name": "icp-tinymce-variable",
+    "version": "0.9.11",
     "description": "Make it possible to use variables in your TinyMCE editor.",
     "main": "src/main.js",
     "keywords": [
@@ -9,7 +9,8 @@
         "customize"
     ],
     "authors": [
-        "Sitebase (Wim Mostmans)"
+        "Sitebase (Wim Mostmans)",
+        "byteasc (J Fulbright)"
     ],
     "license": "MIT",
     "homepage": "http://sitebase.github.io/tinymce-variable",

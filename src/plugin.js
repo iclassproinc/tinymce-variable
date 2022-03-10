@@ -42,6 +42,12 @@ tinymce.PluginManager.add('variable', function (editor) {
     var suffix = editor.getParam("variable_suffix", "}}");
 
     /**
+     * Allow invalid variables and use classname-bad
+     * @type {boolean}
+     */
+    var allowInvalid = editor.getParam('variable_allow_invalid', false);
+
+    /**
      * RegExp is not stateless with '\g' so we return a new variable each call
      * @return {RegExp}
      */
@@ -92,10 +98,16 @@ tinymce.PluginManager.add('variable', function (editor) {
     function createHTMLVariable(value) {
 
         var cleanValue = cleanVariable(value);
+        var invalid = false;
 
         // check if variable is valid
-        if (!isValid(cleanValue))
-            return value;
+        if (!isValid(cleanValue)) {
+            if (allowInvalid) {
+                invalid = true;
+            } else {
+                return value;
+            }
+        }
 
         var cleanMappedValue = getMappedValue(cleanValue);
 
@@ -105,7 +117,7 @@ tinymce.PluginManager.add('variable', function (editor) {
         });
 
         var variable = prefix + cleanValue + suffix;
-        return '<span class="' + className + '" data-original-variable="' + variable + '" contenteditable="false">' + cleanMappedValue + '</span>';
+        return '<span class="' + className + (invalid ? "-bad" : "") + '" data-original-variable="' + variable + '" contenteditable="false">' + cleanMappedValue + '</span>';
     }
 
     /**

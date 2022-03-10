@@ -108,6 +108,8 @@ npm run test
 
 ## History
 
+0.9.6: Remove Minify on PostInstall
+
 For detailed changelog, check [Releases](https://github.com/bubobox/tinymce-variable/releases).
 
 ## License

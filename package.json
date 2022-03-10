@@ -1,10 +1,11 @@
 {
   "name": "icp-tinymce-variable",
-  "version": "0.9.3",
+  "version": "0.9.11",
+  "license": "BSD-3-Clause",
   "scripts": {
     "test": "eslint -c .eslintrc src/plugin.js",
     "serve": "python -m SimpleHTTPServer",
-    "postinstall": "./node_modules/.bin/uglifyjs src/plugin.js -m -o src/plugin.min.js"
+    "prepare": "uglifyjs -o src/plugin.min.js src/plugin.js"
   },
   "repository": {
     "type": "git",
