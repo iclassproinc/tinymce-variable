@@ -48,6 +48,11 @@ tinymce.PluginManager.add('variable', function (editor) {
     var allowInvalid = editor.getParam('variable_allow_invalid', false);
 
     /**
+    * Get custom bad variable name
+    */
+    var replacebadVar = editor.getParam('replace_bad_variable', null);
+
+    /**
      * RegExp is not stateless with '\g' so we return a new variable each call
      * @return {RegExp}
      */
@@ -117,6 +122,11 @@ tinymce.PluginManager.add('variable', function (editor) {
         });
 
         var variable = prefix + cleanValue + suffix;
+
+        if (replacebadVar && invalid) {
+            cleanMappedValue = replacebadVar;
+        }
+        
         return '<span class="' + className + (invalid ? "-bad" : "") + '" data-original-variable="' + variable + '" contenteditable="false">' + cleanMappedValue + '</span>';
     }
 
