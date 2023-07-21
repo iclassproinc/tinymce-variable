@@ -1,6 +1,6 @@
 {
   "name": "@iclasspro/icp-tinymce-variable",
-  "version": "0.9.14",
+  "version": "0.9.15",
   "license": "BSD-3-Clause",
   "scripts": {
     "test": "eslint -c .eslintrc src/plugin.js",
