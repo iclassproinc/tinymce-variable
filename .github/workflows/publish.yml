@@ -18,6 +18,7 @@ jobs:
         uses: JS-DevTools/npm-publish@v2
         with:
           token: ${{ secrets.NPM_TOKEN }}
+          strategy: upgrade
       - if: ${{ steps.publish.outputs.type }}
         run: |
           echo "Version published: ${{ steps.publish.outputs.version }}"
