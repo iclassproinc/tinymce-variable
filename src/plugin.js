@@ -72,9 +72,9 @@ tinymce.PluginManager.add('variable', function (editor) {
         if (!valid || valid.length === 0)
             return true;
 
-        var validString = '|' + valid.join('|') + '|';
+        var validString = '|' + valid.join('|').toLowerCase() + '|';
 
-        return validString.indexOf('|' + name + '|') > -1 ? true : false;
+        return validString.indexOf('|' + name.toLowerCase() + '|') > -1 ? true : false;
     }
 
     function getMappedValue(cleanValue) {
