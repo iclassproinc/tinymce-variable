@@ -12,7 +12,6 @@
   },
   "description": "Make it possible to use variables in your TinyMCE editor with bad variable flagging",
   "main": "src/plugin.js",
-  "dependencies": {},
   "devDependencies": {
     "eslint": "^6.6.0",
     "uglify-js": "^3.1.0"
