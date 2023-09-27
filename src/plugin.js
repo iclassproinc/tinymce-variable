@@ -179,7 +179,6 @@ tinymce.PluginManager.add('variable', function (editor) {
         for (var i = 0; i < parentSpans.length; i++) {
             var parentSpan = parentSpans[i];
             var childSpans = editor.dom.select('span', parentSpan);
-            console.log(childSpans, 'childSpans', childSpans.length);
 
             if (childSpans.length >= 1) {
                 parentSpan.style.removeProperty('line-height');
