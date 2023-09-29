@@ -52,6 +52,8 @@ tinymce.PluginManager.add('variable', function (editor) {
     */
     var replacebadVar = editor.getParam('replace_bad_variable', null);
 
+    let typedCharacters = '';
+
     /**
      * RegExp is not stateless with '\g' so we return a new variable each call
      * @return {RegExp}
@@ -140,7 +142,6 @@ tinymce.PluginManager.add('variable', function (editor) {
             node,
             div;
 
-        var selection = editor.selection.getBookmark();
         // find nodes that contain a string variable
         tinymce.walk(editor.getBody(), function (n) {
             if (n.nodeType == 3 && n.nodeValue && getStringVariableRegex().test(n.nodeValue)) {
@@ -158,32 +159,6 @@ tinymce.PluginManager.add('variable', function (editor) {
 
             editor.dom.remove(nodeList[i]);
         }
-        moveCursorToEnd(selection);
-    }
-
-    function moveCursorToEnd(selection) {
-        var elements = editor.dom.select('span[data-original-variable]');
-        if (elements.length > 0) {
-            var lastElement = elements[elements.length - 1];
-            var lastVariableLength = lastElement.textContent.length;
-
-            // Set the cursor position to the end of the last variable
-            editor.selection.moveToBookmark(selection);
-            editor.selection.setRng(lastElement.childNodes[0], lastVariableLength, lastElement.childNodes[0], lastVariableLength);
-            removeHiddenBookmarks();
-        }
-    }
-
-    function removeHiddenBookmarks() {
-        var parentSpans = editor.dom.select('span[data-mce-type="bookmark"]');
-        for (var i = 0; i < parentSpans.length; i++) {
-            var parentSpan = parentSpans[i];
-            var childSpans = editor.dom.select('span', parentSpan);
-
-            if (childSpans.length >= 1) {
-                parentSpan.style.removeProperty('line-height');
-            }
-        }
     }
 
     /**
@@ -196,7 +171,6 @@ tinymce.PluginManager.add('variable', function (editor) {
             nodeValue,
             node,
             div;
-        var selection = editor.selection.getBookmark();
 
         // find nodes that contain a HTML variable
         tinymce.walk(editor.getBody(), function (n) {
@@ -220,7 +194,6 @@ tinymce.PluginManager.add('variable', function (editor) {
             // because we now have an text representation of the variable
             editor.dom.remove(nodeList[i]);
         }
-        moveCursorToEnd(selection);
     }
 
     /**
@@ -257,7 +230,6 @@ tinymce.PluginManager.add('variable', function (editor) {
                 editor.selection.setRng(cursorPosition);
             }
         }
-        removeHiddenBookmarks();
         editor.focus();
     }
 
@@ -307,6 +279,13 @@ tinymce.PluginManager.add('variable', function (editor) {
     var currentDirection;
 
     function keyDown(e) {
+        if (e.keyCode === 8 && typedCharacters.length > 0) {
+            // Remove the last character
+            typedCharacters = typedCharacters.slice(0, -1);
+        } else if ((e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode === 219 || e.keyCode === 221) || (e.keyCode === 189)) {
+            const typedChar = e.key;
+            typedCharacters += typedChar;
+        }
         if (e.keyCode == 37) {
             currentDirection = 'left';
         } else if (e.keyCode == 39) {
@@ -325,6 +304,24 @@ tinymce.PluginManager.add('variable', function (editor) {
 
                 e.preventDefault();
                 e.stopImmediatePropagation();
+            }
+        }
+    }
+
+    function keyUp() {
+        const cursorPosition = editor.selection.getRng();
+        const variablePattern = /\[\[([^\[\]]+)\]\]/g;
+        const matches = typedCharacters.match(variablePattern);
+        if (matches && matches.length > 0) {
+            const newNode = matches[matches.length - 1];
+            const elements = editor.dom.select('span[data-original-variable="' + newNode + '"]');
+            if (elements.length > 0) {
+                // Select the last element
+                const newNodes = elements[elements.length - 1];
+                cursorPosition.setStartAfter(newNodes);
+                cursorPosition.collapse(true);
+                editor.selection.setRng(cursorPosition);
+                typedCharacters = '';
             }
         }
     }
@@ -359,6 +356,7 @@ tinymce.PluginManager.add('variable', function (editor) {
     editor.on('click', handleClick);
     editor.on('mousedown', preventDrag);
     editor.on('keydown', keyDown);
+    editor.on('keyup', keyUp);
     editor.on('NodeChange', nodeChange);
 
     this.addVariable = addVariable;
