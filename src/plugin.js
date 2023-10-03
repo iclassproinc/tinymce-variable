@@ -52,6 +52,8 @@ tinymce.PluginManager.add('variable', function (editor) {
     */
     var replacebadVar = editor.getParam('replace_bad_variable', null);
 
+    let typedCharacters = '';
+
     /**
      * RegExp is not stateless with '\g' so we return a new variable each call
      * @return {RegExp}
@@ -211,8 +213,23 @@ tinymce.PluginManager.add('variable', function (editor) {
      */
     function addVariable(value) {
         var htmlVariable = createHTMLVariable(value);
-        editor.selection.setContent(htmlVariable);
-        editor.selection.collapse();
+
+        // Get the current cursor position within the editor
+        var cursorPosition = editor.selection.getRng();
+
+        // Insert the HTML representation of the variable at the cursor position
+        editor.execCommand('mceInsertContent', false, htmlVariable);
+
+        // If the cursor position is available, set it to the end of the inserted variable
+        if (cursorPosition) {
+            var elements = editor.dom.select('span[data-original-variable="' + prefix + cleanVariable(value) + suffix + '"]');
+            if (elements.length > 0) {
+                var newNode = elements[elements.length - 1]; // Select the last element
+                cursorPosition.setStartAfter(newNode);
+                cursorPosition.collapse(true);
+                editor.selection.setRng(cursorPosition);
+            }
+        }
         editor.focus();
     }
 
@@ -262,6 +279,13 @@ tinymce.PluginManager.add('variable', function (editor) {
     var currentDirection;
 
     function keyDown(e) {
+        if (e.keyCode === 8 && typedCharacters.length > 0) {
+            // Remove the last character
+            typedCharacters = typedCharacters.slice(0, -1);
+        } else if ((e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode === 219 || e.keyCode === 221) || (e.keyCode === 189)) {
+            const typedChar = e.key;
+            typedCharacters += typedChar;
+        }
         if (e.keyCode == 37) {
             currentDirection = 'left';
         } else if (e.keyCode == 39) {
@@ -280,6 +304,24 @@ tinymce.PluginManager.add('variable', function (editor) {
 
                 e.preventDefault();
                 e.stopImmediatePropagation();
+            }
+        }
+    }
+
+    function keyUp() {
+        const cursorPosition = editor.selection.getRng();
+        const variablePattern = /\[\[([^\[\]]+)\]\]/g;
+        const matches = typedCharacters.match(variablePattern);
+        if (matches && matches.length > 0) {
+            const newNode = matches[matches.length - 1];
+            const elements = editor.dom.select('span[data-original-variable="' + newNode + '"]');
+            if (elements.length > 0) {
+                // Select the last element
+                const newNodes = elements[elements.length - 1];
+                cursorPosition.setStartAfter(newNodes);
+                cursorPosition.collapse(true);
+                editor.selection.setRng(cursorPosition);
+                typedCharacters = '';
             }
         }
     }
@@ -314,6 +356,7 @@ tinymce.PluginManager.add('variable', function (editor) {
     editor.on('click', handleClick);
     editor.on('mousedown', preventDrag);
     editor.on('keydown', keyDown);
+    editor.on('keyup', keyUp);
     editor.on('NodeChange', nodeChange);
 
     this.addVariable = addVariable;
