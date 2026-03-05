@@ -18,5 +18,9 @@
   },
   "bugs": {
     "url": "https://github.com/iclassproinc/tinymce-variable/issues"
+  },
+  "trustedDependencies": [],
+  "pnpm": {
+    "onlyBuiltDependencies": []
   }
 }
