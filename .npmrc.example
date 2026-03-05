@@ -1,9 +1,10 @@
 # Security: Block all third-party install scripts to prevent supply chain attacks
-# This stops malicious packages from executing code during npm install.
-# If you need to run install scripts for a specific package, use:
-#   npm rebuild <package-name>
+# This stops malicious packages from executing code during dependency installation.
+# If a specific package requires install scripts, you can run them individually:
+#   npm rebuild <package-name>  (npm/yarn)
+#   bun install --trust <package-name>  (bun)
 ignore-scripts=true
 
 # NOTE: This repo uses prepare script to minify the plugin.
-# After running npm install, manually run:
+# After installing dependencies, manually run:
 #   npx uglifyjs -o src/plugin.min.js src/plugin.js
